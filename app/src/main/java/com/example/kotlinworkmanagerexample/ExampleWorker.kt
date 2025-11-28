@@ -13,6 +13,7 @@ import androidx.core.app.NotificationManagerCompat
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
 import androidx.work.workDataOf
+import kotlin.math.log
 
 class ExampleWorker(
     appContext: Context,
@@ -21,7 +22,7 @@ class ExampleWorker(
 
     @RequiresPermission(Manifest.permission.POST_NOTIFICATIONS)
     override suspend fun doWork(): Result {
-        showNotification("Download resumed", "Your downloading process has started again...")
+        showNotification("Download resumed", "This notification repeats every 15 minutes!")
 
         val inputText = inputData.getString("INPUT") ?: "No input"
 
@@ -47,6 +48,9 @@ class ExampleWorker(
                 .createNotificationChannel(channel)
         }
 
+        val notificationId = System.currentTimeMillis().toInt()
+        Log.d("TESTING", "showNotification notificationId: "+notificationId.toString())
+
         val notification = NotificationCompat.Builder(applicationContext, channelId)
             .setContentTitle(title)
             .setContentText(message)
@@ -54,6 +58,6 @@ class ExampleWorker(
             .build()
 
         NotificationManagerCompat.from(applicationContext)
-            .notify(1001, notification)
+            .notify(notificationId, notification)
     }
 }
